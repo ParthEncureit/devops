@@ -17,5 +17,3 @@
       - "--exclude=.github"
       - "--exclude=ansible"
 
-- name: Force failure for rollback test
-  shell: exit 1
