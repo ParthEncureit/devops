@@ -1,0 +1,16 @@
+- name: Generate release timestamp
+  set_fact:
+    release_name: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+
+- name: Create release directory
+  file:
+    path: "{{ releases_path }}/{{ release_name }}"
+    state: directory
+
+- name: Rsync code to release
+  synchronize:
+    src: "{{ playbook_dir }}/../"
+    dest: "{{ releases_path }}/{{ release_name }}"
+    rsync_opts:
+      - "--exclude=.git"
+      - "--exclude=ansible"

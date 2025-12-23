@@ -1,0 +1,6 @@
+- name: Update current symlink
+  file:
+    src: "{{ releases_path }}/{{ release_name }}"
+    dest: "{{ current_path }}"
+    state: link
+    force: yes

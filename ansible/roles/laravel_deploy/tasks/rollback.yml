@@ -1,0 +1,4 @@
+- name: Rollback to previous release
+  shell: |
+    PREV=$(ls -dt {{ releases_path }}/* | sed -n '2p')
+    ln -sfn "$PREV" "{{ current_path }}"

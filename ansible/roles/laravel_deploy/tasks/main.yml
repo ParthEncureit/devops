@@ -1,0 +1,6 @@
+- block:
+    - import_tasks: release.yml
+    - import_tasks: laravel.yml
+    - import_tasks: symlink.yml
+  rescue:
+    - import_tasks: rollback.yml
