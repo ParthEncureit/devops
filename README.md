@@ -1,5 +1,6 @@
 # Ansible GitHub Actions CI/CD Demo
 
+# --------------------Structure---------------------------------
 devops/
 ├── .github/workflows/
 │   └── deploy.yml           
