@@ -1,4 +1,14 @@
-- name: Rollback to previous release
+- name: Find previous release
   shell: |
-    PREV=$(ls -dt {{ releases_path }}/* | sed -n '2p')
-    ln -sfn "$PREV" "{{ current_path }}"
+    ls -dt {{ releases_path }}/* | sed -n '2p'
+  register: previous_release
+  changed_when: false
+  failed_when: false
+
+- name: Rollback current symlink
+  file:
+    src: "{{ previous_release.stdout }}"
+    dest: "{{ current_path }}"
+    state: link
+    force: yes
+  when: previous_release.stdout != ""

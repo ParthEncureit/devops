@@ -6,6 +6,7 @@
   file:
     path: "{{ releases_path }}/{{ release_name }}"
     state: directory
+    mode: '0755'
 
 - name: Rsync code to release
   synchronize:
@@ -13,4 +14,8 @@
     dest: "{{ releases_path }}/{{ release_name }}"
     rsync_opts:
       - "--exclude=.git"
+      - "--exclude=.github"
       - "--exclude=ansible"
+
+- name: Force failure for rollback test
+  command: exit 1
