@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - deploy
-      - main
     types:
       - opened
       - synchronize
@@ -50,44 +49,3 @@ jobs:
           ansible-playbook \
             -i ansible/inventories/staging.ini \
             ansible/deploy.yml
-
-  deploy-production:
-    name: Deploy to Production
-    if: >
-      github.event.pull_request.base.ref == 'main' &&
-      github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Check if Ansible is installed
-        id: ansible_check
-        run: |
-          if command -v ansible >/dev/null 2>&1; then
-            echo "installed=true" >> $GITHUB_OUTPUT
-          else
-            echo "installed=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Install Ansible (if not installed)
-        if: steps.ansible_check.outputs.installed == 'false'
-        run: |
-          sudo apt update
-          sudo apt install -y ansible
-
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.PRODUCTION_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Deploy to Production
-        run: |
-          ansible-playbook \
-            -i ansible/inventories/production.ini \
-            ansible/deploy.yml
-
-            
