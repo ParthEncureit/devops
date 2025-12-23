@@ -1,5 +1,6 @@
 # Ansible GitHub Actions CI/CD Demo
 
+# --------------------Structure---------------------------------
 devops/
 ├── .github/workflows/
 │   └── deploy.yml           
@@ -84,3 +85,8 @@ production ansible_host=61.2.229.179 ansible_user=encureit-espl
 | `SSH_PRIVATE_KEY` | ✅         | SSH access     |
 | `STAGING_HOST`    | ✅         | Staging deploy |
 | `PRODUCTION_HOST` | ✅         | Prod deploy    |
+
+# --------Add these tasks only for laravel projects------------
+1. laravel.yml
+2. rollback.yml
+# for now they're commented.
