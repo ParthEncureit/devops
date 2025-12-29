@@ -1,0 +1,27 @@
+- set_fact:
+    deploy_failed: false
+
+- block:
+    - import_tasks: release.yml
+
+    - import_tasks: laravel.yml
+      when: is_laravel | bool
+
+    - import_tasks: symlink.yml
+
+  rescue:
+    - set_fact:
+        deploy_failed: true
+
+    - import_tasks: rollback.yml
+
+  always:
+    - name: Deployment summary
+      debug:
+        msg: >
+          Deployment {{ 'FAILED and ROLLED BACK' if deploy_failed else 'SUCCEEDED' }}
+
+- name: Fail pipeline if rollback occurred
+  fail:
+    msg: "Deployment failed. Rollback was executed."
+  when: deploy_failed

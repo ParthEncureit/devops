@@ -1,0 +1,4 @@
+- hosts: laravel
+  become: yes
+  roles:
+    - laravel_deploy

@@ -1,0 +1,21 @@
+- name: Install composer dependencies
+  command: composer install --no-dev --optimize-autoloader
+  args:
+    chdir: "{{ releases_path }}/{{ release_name }}"
+
+- name: Link shared .env
+  file:
+    src: "{{ shared_path }}/.env"
+    dest: "{{ releases_path }}/{{ release_name }}/.env"
+    state: link
+
+- name: Link storage
+  file:
+    src: "{{ shared_path }}/storage"
+    dest: "{{ releases_path }}/{{ release_name }}/storage"
+    state: link
+
+- name: Run migrations
+  command: php artisan migrate --force
+  args:
+    chdir: "{{ releases_path }}/{{ release_name }}"
