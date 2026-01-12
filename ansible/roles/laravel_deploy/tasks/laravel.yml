@@ -20,10 +20,18 @@
   args:
     chdir: "{{ releases_path }}/{{ release_name }}"
 
-- name: Clear & cache config
-  command: php artisan config:clear
+- name: Remove Laravel cached files
+  file:
+    path: "{{ releases_path }}/{{ release_name }}/bootstrap/cache"
+    state: directory
+    mode: '0775'
+    recurse: yes
+
+- name: Clear Laravel optimization caches
+  command: php artisan optimize:clear
   args:
     chdir: "{{ releases_path }}/{{ release_name }}"
+  failed_when: false
 
 - name: Cache config
   command: php artisan config:cache
