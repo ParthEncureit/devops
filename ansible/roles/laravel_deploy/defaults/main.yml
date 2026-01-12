@@ -1,6 +1,6 @@
 app_name: officeserver
 base_path: /var/www/officeserver
-is_laravel: false
+is_laravel: true
 
 releases_path: "{{ base_path }}/releases"
 shared_path: "{{ base_path }}/shared"
