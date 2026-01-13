@@ -1,6 +1,0 @@
-{
-  "private": true,
-  "scripts": {
-    "dev": "echo 'No frontend build required'"
-  }
-}
