@@ -1,3 +1,4 @@
+---
 - name: Link shared .env
   file:
     src: "{{ shared_path }}/.env"
@@ -9,6 +10,7 @@
     src: "{{ shared_path }}/storage"
     dest: "{{ releases_path }}/{{ release_name }}/storage"
     state: link
+    force: yes
 
 - name: Install composer dependencies
   command: >
@@ -19,13 +21,14 @@
     --optimize-autoloader
   args:
     chdir: "{{ releases_path }}/{{ release_name }}"
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: "1"
 
-- name: Remove Laravel cached files
+- name: Ensure bootstrap/cache directory exists
   file:
     path: "{{ releases_path }}/{{ release_name }}/bootstrap/cache"
     state: directory
     mode: '0775'
-    recurse: yes
 
 - name: Clear Laravel optimization caches
   command: php artisan optimize:clear
@@ -52,3 +55,13 @@
   command: php artisan migrate --force
   args:
     chdir: "{{ releases_path }}/{{ release_name }}"
+
+- name: Set proper permissions
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0775'
+    recurse: yes
+  loop:
+    - "{{ releases_path }}/{{ release_name }}/bootstrap/cache"
+  when: item is exists
