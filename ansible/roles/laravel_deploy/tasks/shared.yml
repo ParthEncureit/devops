@@ -1,0 +1,40 @@
+---
+- name: Ensure base directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ base_path }}"
+    - "{{ releases_path }}"
+    - "{{ shared_path }}"
+
+- name: Ensure shared storage directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0775'
+  loop:
+    - "{{ shared_path }}/storage"
+    - "{{ shared_path }}/storage/app"
+    - "{{ shared_path }}/storage/app/public"
+    - "{{ shared_path }}/storage/framework"
+    - "{{ shared_path }}/storage/framework/cache"
+    - "{{ shared_path }}/storage/framework/sessions"
+    - "{{ shared_path }}/storage/framework/views"
+    - "{{ shared_path }}/storage/logs"
+
+- name: Check if shared .env exists
+  stat:
+    path: "{{ shared_path }}/.env"
+  register: shared_env
+
+- name: Warn if .env doesn't exist
+  debug:
+    msg: "WARNING: {{ shared_path }}/.env does not exist. Please create it manually before deployment."
+  when: not shared_env.stat.exists
+
+- name: Fail if .env doesn't exist
+  fail:
+    msg: "Shared .env file not found at {{ shared_path }}/.env. Please create it before deploying."
+  when: not shared_env.stat.exists

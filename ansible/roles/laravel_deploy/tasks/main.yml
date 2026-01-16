@@ -1,25 +1,37 @@
+---
 - set_fact:
     deploy_failed: false
 
 - block:
-    - import_tasks: release.yml
+    - name: Setup shared directories
+      import_tasks: shared.yml
 
-    - import_tasks: laravel.yml
+    - name: Create new release
+      import_tasks: release.yml
+
+    - name: Configure Laravel
+      import_tasks: laravel.yml
       when: is_laravel | bool
 
-    - import_tasks: symlink.yml
+    - name: Switch to new release
+      import_tasks: symlink.yml
+    
+    - name: Cleanup old releases
+      import_tasks: cleanup.yml
 
   rescue:
     - set_fact:
         deploy_failed: true
 
-    - import_tasks: rollback.yml
+    - name: Rollback deployment
+      import_tasks: rollback.yml
 
   always:
     - name: Deployment summary
       debug:
         msg: >
           Deployment {{ 'FAILED and ROLLED BACK' if deploy_failed else 'SUCCEEDED' }}
+          to {{ ansible_host }} at {{ lookup('pipe', 'date "+%Y-%m-%d %H:%M:%S"') }}
 
 - name: Fail pipeline if rollback occurred
   fail:

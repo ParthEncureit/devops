@@ -1,14 +1,38 @@
-- name: Find previous release
-  shell: |
-    ls -dt {{ releases_path }}/* | sed -n '2p'
-  register: previous_release
-  changed_when: false
-  failed_when: false
+---
+- name: Find all releases sorted by time
+  find:
+    paths: "{{ releases_path }}"
+    file_type: directory
+  register: all_releases_for_rollback
+
+- name: Sort releases by modification time
+  set_fact:
+    sorted_releases_rollback: "{{ all_releases_for_rollback.files | sort(attribute='mtime', reverse=true) }}"
+
+- name: Find previous release (skip current failed one)
+  set_fact:
+    previous_release_path: "{{ sorted_releases_rollback[1].path if sorted_releases_rollback | length > 1 else '' }}"
 
 - name: Rollback current symlink
   file:
-    src: "{{ previous_release.stdout }}"
+    src: "{{ previous_release_path }}"
     dest: "{{ current_path }}"
     state: link
     force: yes
-  when: previous_release.stdout != ""
+  when: previous_release_path != ""
+
+- name: Remove failed release
+  file:
+    path: "{{ releases_path }}/{{ release_name }}"
+    state: absent
+  when: release_name is defined
+
+- name: Display rollback message
+  debug:
+    msg: "Rolled back to previous release: {{ previous_release_path | basename }}"
+  when: previous_release_path != ""
+
+- name: Display no rollback message
+  debug:
+    msg: "No previous release found to rollback to. This was the first deployment."
+  when: previous_release_path == ""
