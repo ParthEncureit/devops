@@ -1,14 +1,10 @@
+
 <?php
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HealthController;
 
-Route::get('/', function () {
-    DB::table('visits')->insert([
-        'page' => 'home',
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-
-    return "✅ Laravel running with shared .env & DB connected";
+Route::get("/", function () {
+    return "Laravel CI/CD Test Project";
 });
+
+Route::get("/health", [HealthController::class, "index"]);

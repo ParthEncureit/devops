@@ -1,0 +1,28 @@
+---
+- name: Find all releases
+  find:
+    paths: "{{ releases_path }}"
+    file_type: directory
+  register: all_releases
+
+- name: Sort releases by modification time
+  set_fact:
+    sorted_releases: "{{ all_releases.files | sort(attribute='mtime', reverse=true) }}"
+
+- name: Get releases to remove (keep last 5)
+  set_fact:
+    releases_to_remove: "{{ sorted_releases[5:] | map(attribute='path') | list }}"
+  when: sorted_releases | length > 5
+
+- name: Remove old releases
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ releases_to_remove }}"
+  when: 
+    - releases_to_remove is defined
+    - releases_to_remove | length > 0
+
+- name: Display cleanup summary
+  debug:
+    msg: "Kept {{ [sorted_releases | length, 5] | min }} releases, removed {{ releases_to_remove | default([]) | length }} old releases"
