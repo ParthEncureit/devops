@@ -1,9 +1,0 @@
-
-CREATE TABLE posts (
-  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP NULL,
-  updated_at TIMESTAMP NULL
-);
-
-INSERT INTO posts (title) VALUES ('CI/CD works');
