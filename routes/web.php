@@ -1,10 +1,6 @@
-
-<?php
-
-use App\Http\Controllers\HealthController;
-
-Route::get("/", function () {
-    return "Laravel CI/CD Test Project";
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'env' => config('app.env'),
+    ]);
 });
-
-Route::get("/health", [HealthController::class, "index"]);
