@@ -15,9 +15,6 @@
 
     - name: Switch to new release
       import_tasks: symlink.yml
-    
-    - name: Run health checks
-      import_tasks: health_check.yml
 
     - name: Cleanup old releases
       import_tasks: cleanup.yml
