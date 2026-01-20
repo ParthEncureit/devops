@@ -1,0 +1,5 @@
+# Don't commit these
+/vendor/
+/node_modules/
+.env
+/storage/*.key

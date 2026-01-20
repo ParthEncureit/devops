@@ -1,6 +1,16 @@
-Route::get('/health', function () {
-    return response()->json([
-        'status' => 'ok',
-        'env' => config('app.env'),
-    ]);
+use Illuminate\Support\Facades\DB;
+
+Route::get('/db-test', function () {
+    try {
+        $tables = DB::select('SHOW TABLES');
+        return response()->json([
+            'status' => 'DB CONNECTED',
+            'tables_count' => count($tables),
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'DB ERROR',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
 });
